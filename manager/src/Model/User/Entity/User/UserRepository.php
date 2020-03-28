@@ -4,19 +4,112 @@ declare(strict_types=1);
 
 namespace App\Model\User\Entity\User;
 
-interface UserRepository
+use App\Model\EntityNotFoundException;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+
+class UserRepository
 {
-    public function findByConfirmToken(string $token): ?User;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
 
-    public function findByResetToken(string $token): ?User;
+    /**
+     * @var EntityRepository
+     */
+    private $repo;
 
-    public function get(Id $id): User;
+    /**
+     * UserRepository constructor.
+     * @param EntityManagerInterface $em
+     */
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->em = $em;
+        $this->repo = $em->getRepository(User::class);
+    }
 
-    public function getByEmail(Email $email): User;
+    /**
+     * @param string $token
+     * @return User|null
+     */
+    public function findByConfirmToken(string $token): ?User
+    {
+        return $this->repo->findOneBy(['confirmToken' => $token]);
+    }
 
-    public function hasByMail(Email $email): bool;
+    public function findByResetToken(string $token): ?User
+    {
+        return $this->repo->findOneBy(['resetToken.token' => $token]);
+    }
 
-    public function hasByNetworkIdentity(string $network, string $identity): bool;
+    /**
+     * @param Id $id
+     * @return User
+     */
+    public function get(Id $id): User
+    {
+        if (!$user = $this->repo->find($id->getValue())) {
+            throw new EntityNotFoundException('User is not found.');
+        }
 
-    public function add(User $user): void;
+        return $user;
+    }
+
+    /**
+     * @param Email $email
+     * @return User
+     */
+    public function getByEmail(Email $email): User
+    {
+        if (!$user = $this->repo->findOneBy(['email' => $email->getValue()])) {
+            throw new EntityNotFoundException('User is not found.');
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param Email $email
+     * @return bool
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function hasByMail(Email $email): bool
+    {
+        return $this->repo->createQueryBuilder('t')
+                ->select('COUNT(t.id)')
+                ->andWhere('t.email = :email')
+                ->setParameter(':email', $email->getValue())
+                ->getQuery()->getSingleScalarResult() > 0;
+    }
+
+    /**
+     * @param string $network
+     * @param string $identity
+     * @return bool
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function hasByNetworkIdentity(string $network, string $identity): bool
+    {
+        return $this->repo->createQueryBuilder('t')
+                ->select('COUNT(t.id)')
+                ->innerJoin('t.networks', 'n')
+                ->andWhere('n.networks = :network and n.identity = :identity')
+                ->setParameter(':network', $network)
+                ->setParameter(':identity', $identity)
+                ->getQuery()->getSingleScalarResult() > 0;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function add(User $user): void
+    {
+        $this->em->persist($user);
+    }
 }

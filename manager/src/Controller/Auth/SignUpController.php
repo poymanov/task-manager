@@ -3,10 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
-
-use App\Model\User\UseCase\SignUp\Request\Command;
-use App\Model\User\UseCase\SignUp\Request\Form;
-use App\Model\User\UseCase\SignUp\Request\Handler;
+use App\Model\User\UseCase\SignUp;
 use DomainException;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -34,15 +31,15 @@ class SignUpController extends AbstractController
     /**
      * @Route("/signup", name="auth.signup")
      * @param Request $request
-     * @param Handler $handler
+     * @param SignUp\Request\Handler $handler
      * @return Response
      * @throws Exception
      */
-    public function request(Request $request, Handler $handler): Response
+    public function request(Request $request, SignUp\Request\Handler $handler): Response
     {
-        $command = new Command();
+        $command = new SignUp\Request\Command();
 
-        $form = $this->createForm(Form::class, $command);
+        $form = $this->createForm(SignUp\Request\Form::class, $command);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -59,6 +56,27 @@ class SignUpController extends AbstractController
         return $this->render('app/auth/signup.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/signup/{token}", name="auth.signup.confirm")
+     * @param string $token
+     * @param SignUp\Confirm\Handler $handler
+     * @return Response
+     */
+    public function confirm(string $token, SignUp\Confirm\Handler $handler): Response
+    {
+        $command = new SignUp\Confirm\Command($token);
+
+        try {
+            $handler->handle($command);
+            $this->addFlash('success', 'Email is successfully confirmed.');
+            return $this->redirectToRoute('home');
+        } catch (DomainException $e) {
+            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            $this->addFlash('error', $e->getMessage());
+            return $this->redirectToRoute('home');
+        }
     }
 
 }

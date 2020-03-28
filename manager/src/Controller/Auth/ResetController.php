@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Auth;
 
 use App\Model\User\UseCase\Reset;
+use App\ReadModel\User\UserFetcher;
 use DomainException;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -65,8 +66,13 @@ class ResetController extends AbstractController
      * @return Response
      * @throws Exception
      */
-    public function reset(string $token, Request $request, Reset\Reset\Handler $handler): Response
+    public function reset(string $token, Request $request, Reset\Reset\Handler $handler, UserFetcher $users): Response
     {
+        if (!$users->existsByResetToken($token)) {
+            $this->addFlash('error', 'Incorrect or already confirmed token.');
+            return $this->redirectToRoute('home');
+        }
+
         $command = new Reset\Reset\Command($token);
 
         $form = $this->createForm(Reset\Reset\Form::class, $command);

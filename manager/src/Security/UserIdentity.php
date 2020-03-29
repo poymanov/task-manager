@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use App\Model\User\Entity\User\User;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class UserIdentity implements UserInterface
+class UserIdentity implements UserInterface, EquatableInterface
 {
     /**
      * @var string
@@ -29,18 +31,24 @@ class UserIdentity implements UserInterface
     private $role;
 
     /**
-     * UserIdentity constructor.
+     * @var string
+     */
+    private $status;
+
+    /**
      * @param string $id
      * @param string $username
      * @param string $password
      * @param string $role
+     * @param string $status
      */
-    public function __construct(string $id, string $username, string $password, string $role)
+    public function __construct(string $id, string $username, string $password, string $role, string $status)
     {
         $this->id = $id;
         $this->username = $username;
         $this->password = $password;
         $this->role = $role;
+        $this->status = $status;
     }
 
     /**
@@ -49,6 +57,11 @@ class UserIdentity implements UserInterface
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === User::STATUS_ACTIVE;
     }
 
     /**
@@ -89,5 +102,22 @@ class UserIdentity implements UserInterface
     public function eraseCredentials(): void
     {
 
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isEqualTo(UserInterface $user)
+    {
+        if (!$user instanceof self) {
+            return false;
+        }
+
+        return
+            $this->id === $user->id &&
+            $this->username === $user->username &&
+            $this->password === $user->password &&
+            $this->role === $user->role &&
+            $this->status === $user->status;
     }
 }

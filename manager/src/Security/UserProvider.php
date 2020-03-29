@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-
+use App\ReadModel\User\AuthView;
 use App\ReadModel\User\UserFetcher;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -30,18 +30,8 @@ class UserProvider implements UserProviderInterface
      */
     public function loadUserByUsername(string $username): UserInterface
     {
-        $user = $this->users->findForAuth($username);
-
-        if (!$user) {
-            throw new UsernameNotFoundException('');
-        }
-
-        return new UserIdentity(
-            $user->id,
-            $user->email,
-            $user->password_hash,
-            $user->role
-        );
+        $user = $this->loadUser($username);
+        return self::identityByUser($user);
     }
 
     /**
@@ -62,5 +52,33 @@ class UserProvider implements UserProviderInterface
     public function supportsClass(string $class): bool
     {
         return $class === UserIdentity::class;
+    }
+
+    /**
+     * @param $username
+     * @return AuthView
+     */
+    private function loadUser($username): AuthView
+    {
+        if (!$user = $this->users->findForAuth($username)) {
+            throw new UsernameNotFoundException('');
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param AuthView $user
+     * @return UserIdentity
+     */
+    private static function identityByUser(AuthView $user): UserIdentity
+    {
+        return new UserIdentity(
+            $user->id,
+            $user->email,
+            $user->password_hash,
+            $user->role,
+            $user->status
+        );
     }
 }

@@ -24,4 +24,9 @@ class AuthView
      * @var string
      */
     public $role;
+
+    /**
+     * @var string
+     */
+    public $status;
 }

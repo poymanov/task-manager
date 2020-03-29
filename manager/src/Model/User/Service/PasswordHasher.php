@@ -18,4 +18,14 @@ class PasswordHasher
 
         return $hash;
     }
+
+    /**
+     * @param string $password
+     * @param string $hash
+     * @return bool
+     */
+    public function validate(string $password, string $hash): bool
+    {
+        return password_verify($password, $hash);
+    }
 }

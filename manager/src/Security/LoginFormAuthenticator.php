@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Model\User\Service\PasswordHasher;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,17 +23,31 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 {
     use TargetPathTrait;
 
+    /**
+     * @var UrlGeneratorInterface
+     */
     private $urlGenerator;
+
+    /**
+     * @var CsrfTokenManagerInterface
+     */
     private $csrfTokenManager;
+
+    /**
+     * @var PasswordHasher
+     */
+    private $hasher;
 
     /**
      * @param UrlGeneratorInterface $urlGenerator
      * @param CsrfTokenManagerInterface $csrfTokenManager
+     * @param PasswordHasher $hasher
      */
-    public function __construct(UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager)
+    public function __construct(UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, PasswordHasher $hasher)
     {
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
+        $this->hasher = $hasher;
     }
 
     /**
@@ -88,14 +103,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * @param mixed $credentials
      * @param UserInterface $user
-     * @return bool|void
+     * @return bool
      * @throws Exception
      */
-    public function checkCredentials($credentials, UserInterface $user)
+    public function checkCredentials($credentials, UserInterface $user): bool
     {
-        // Check the user's password or other credentials and return true or false
-        // If there are no credentials to check, you can just return true
-        throw new Exception('TODO: check the credentials inside '.__FILE__);
+        return $this->hasher->validate($credentials['password'], $user->getPassword());
     }
 
     /**

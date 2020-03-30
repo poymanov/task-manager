@@ -99,7 +99,7 @@ class UserRepository
         return $this->repo->createQueryBuilder('t')
                 ->select('COUNT(t.id)')
                 ->innerJoin('t.networks', 'n')
-                ->andWhere('n.networks = :network and n.identity = :identity')
+                ->andWhere('n.network = :network and n.identity = :identity')
                 ->setParameter(':network', $network)
                 ->setParameter(':identity', $identity)
                 ->getQuery()->getSingleScalarResult() > 0;

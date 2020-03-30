@@ -31,3 +31,11 @@ services:
     App\EventListener\SetFromListener:
         $fromEmail: '%env(MAILER_FROM_EMAIL)%'
         $fromName: '%env(MAILER_FROM_NAME)%'
+
+    Predis\Client:
+        arguments:
+            - '%env(REDIS_URL)%'
+
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
+        arguments:
+            - '@Predis\Client'

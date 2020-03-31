@@ -20,7 +20,7 @@ use Exception;
  */
 class User
 {
-    private const STATUS_WAIT = 'wait';
+    public const STATUS_WAIT = 'wait';
 
     public const STATUS_ACTIVE = 'active';
 

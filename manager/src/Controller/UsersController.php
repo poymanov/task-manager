@@ -11,6 +11,7 @@ use App\Model\User\UseCase\Create;
 use App\Model\User\UseCase\Edit;
 use App\Model\User\UseCase\Role;
 use App\Model\User\UseCase\SignUp\Confirm;
+use App\ReadModel\User\Filter;
 use App\ReadModel\User\UserFetcher;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -48,9 +49,17 @@ class UsersController extends AbstractController
      */
     public function index(Request $request, UserFetcher $fetcher): Response
     {
-        $users = $fetcher->all();
+        $filter = new Filter\Filter();
 
-        return $this->render('app/users/index.html.twig', compact('users'));
+        $form = $this->createForm(Filter\Form::class, $filter);
+        $form->handleRequest($request);
+
+        $users = $fetcher->all($filter);
+
+        return $this->render('app/users/index.html.twig', [
+            'users' => $users,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -208,6 +217,11 @@ class UsersController extends AbstractController
     public function block(User $user, Request $request, Block\Handler $handler): Response
     {
         if (!$this->isCsrfTokenValid('block', $request->request->get('token'))) {
+            return $this->redirectToRoute('users.show', ['id' => $user->getId()]);
+        }
+
+        if ($user->getId()->getValue() === $this->getUser()->getId()) {
+            $this->addFlash('error', 'Unable to block yourself.');
             return $this->redirectToRoute('users.show', ['id' => $user->getId()]);
         }
 

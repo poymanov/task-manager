@@ -15,7 +15,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class ConfirmTokenSender
+class SignUpConfirmTokenSender
 {
     /**
      * @var MailerInterface
@@ -28,7 +28,7 @@ class ConfirmTokenSender
     private $twig;
 
     /**
-     * ConfirmTokenSender constructor.
+     * SignUpConfirmTokenSender constructor.
      * @param MailerInterface $mailer
      * @param Environment $twig
      */

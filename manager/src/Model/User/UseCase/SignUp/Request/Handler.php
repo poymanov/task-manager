@@ -7,14 +7,21 @@ namespace App\Model\User\UseCase\SignUp\Request;
 use App\Model\Flusher;
 use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
+use App\Model\User\Entity\User\Name;
 use App\Model\User\Entity\User\User;
 use App\Model\User\Entity\User\UserRepository;
 use App\Model\User\Service\SignUpConfirmTokenizer;
 use App\Model\User\Service\SignUpConfirmTokenSender;
 use App\Model\User\Service\PasswordHasher;
 use DateTimeImmutable;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use DomainException;
 use Exception;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class Handler
 {
@@ -62,6 +69,12 @@ class Handler
 
     /**
      * @param Command $command
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @throws TransportExceptionInterface
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      * @throws Exception
      */
     public function handle(Command $command): void
@@ -72,8 +85,14 @@ class Handler
             throw new DomainException('User already exists.');
         }
 
-        $user = User::signUpByEmail(Id::next(), new DateTimeImmutable(), $email, $this->hasher->hash($command->password),
-            $token = $this->tokenizer->generate());
+        $user = User::signUpByEmail(
+            Id::next(),
+            new DateTimeImmutable(),
+            new Name($command->firstName, $command->lastName),
+            $email,
+            $this->hasher->hash($command->password),
+            $token = $this->tokenizer->generate()
+        );
 
         $this->users->add($user);
         $this->sender->send($email, $token);

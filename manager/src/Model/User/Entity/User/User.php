@@ -56,6 +56,12 @@ class User
     private $confirmToken;
 
     /**
+     * @var Name
+     * @ORM\Embedded(class="Name")
+     */
+    private $name;
+
+    /**
      * @var Email|null
      * @ORM\Column(type="user_user_email", name="new_email", nullable=true)
      */
@@ -92,14 +98,15 @@ class User
     private $networks;
 
     /**
-     * User constructor.
      * @param Id $id
      * @param DateTimeImmutable $date
+     * @param Name $name
      */
-    private function __construct(Id $id, DateTimeImmutable $date)
+    private function __construct(Id $id, DateTimeImmutable $date, Name $name)
     {
         $this->id = $id;
         $this->date = $date;
+        $this->name = $name;
         $this->role = Role::user();
         $this->networks = new ArrayCollection();
     }
@@ -107,14 +114,15 @@ class User
     /**
      * @param Id $id
      * @param DateTimeImmutable $date
+     * @param Name $name
      * @param Email $email
      * @param string $hash
      * @param string $token
      * @return $this
      */
-    public static function signUpByEmail(Id $id, DateTimeImmutable $date, Email $email, string $hash, string $token): self
+    public static function signUpByEmail(Id $id, DateTimeImmutable $date, Name $name, Email $email, string $hash, string $token): self
     {
-        $user = new self($id, $date);
+        $user = new self($id, $date, $name);
         $user->email = $email;
         $user->passwordHash = $hash;
         $user->confirmToken = $token;
@@ -135,14 +143,15 @@ class User
     /**
      * @param Id $id
      * @param DateTimeImmutable $date
+     * @param Name $name
      * @param string $network
      * @param string $identity
      * @return $this
      * @throws Exception
      */
-    public static function signUpByNetwork(Id $id, DateTimeImmutable $date, string $network, string $identity): self
+    public static function signUpByNetwork(Id $id, DateTimeImmutable $date, Name $name, string $network, string $identity): self
     {
-        $user = new self($id, $date);
+        $user = new self($id, $date, $name);
         $user->attachNetwork($network, $identity);
         $user->status = self::STATUS_ACTIVE;
 
@@ -154,7 +163,7 @@ class User
      * @param string $identity
      * @throws Exception
      */
-    private function attachNetwork(string $network, string $identity): void
+    public function attachNetwork(string $network, string $identity): void
     {
         foreach ($this->networks as $existing) {
             if ($existing->isForNetwork($network)) {
@@ -163,6 +172,24 @@ class User
         }
 
         $this->networks->add(new Network($this, $network, $identity));
+    }
+
+    /**
+     * @param string $network
+     * @param string $identity
+     */
+    public function detachNetwork(string $network, string $identity): void
+    {
+        foreach ($this->networks as $existing) {
+            if ($existing->isFor($network, $identity)) {
+                if (!$this->email && $this->networks->count() === 1) {
+                    throw new DomainException('Unable to detach the last identity.');
+                }
+                $this->networks->removeElement($existing);
+                return;
+            }
+        }
+        throw new DomainException('Network is not attached.');
     }
 
     /**
@@ -242,6 +269,14 @@ class User
     }
 
     /**
+     * @param Name $name
+     */
+    public function changeName(Name $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @param Role $role
      */
     public function changeRole(Role $role): void
@@ -307,6 +342,14 @@ class User
     public function getConfirmToken(): ?string
     {
         return $this->confirmToken;
+    }
+
+    /**
+     * @return Name
+     */
+    public function getName(): Name
+    {
+        return $this->name;
     }
 
     /**

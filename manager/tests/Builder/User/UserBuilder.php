@@ -6,6 +6,7 @@ namespace App\Tests\Builder\User;
 
 use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
+use App\Model\User\Entity\User\Name;
 use App\Model\User\Entity\User\User;
 use BadMethodCallException;
 use DateTimeImmutable;
@@ -22,6 +23,11 @@ class UserBuilder
      * @var DateTimeImmutable
      */
     private $date;
+
+    /**
+     * @var Name
+     */
+    private $name;
 
     /**
      * @var Email
@@ -61,6 +67,7 @@ class UserBuilder
     {
         $this->id = Id::next();
         $this->date = new DateTimeImmutable();
+        $this->name = new Name('First', 'Last');
     }
 
     /**
@@ -110,7 +117,14 @@ class UserBuilder
     public function build(): User
     {
         if ($this->email) {
-            $user = User::signUpByEmail($this->id, $this->date, $this->email, $this->hash, $this->token);
+            $user = User::signUpByEmail(
+                $this->id,
+                $this->date,
+                $this->name,
+                $this->email,
+                $this->hash,
+                $this->token
+            );
 
             if ($this->confirmed) {
                 $user->confirmSignUp();
@@ -120,7 +134,13 @@ class UserBuilder
         }
 
         if ($this->network) {
-            return User::signUpByNetwork($this->id, $this->date, $this->network, $this->identity);
+            return User::signUpByNetwork(
+                $this->id,
+                $this->date,
+                $this->name,
+                $this->network,
+                $this->identity
+            );
         }
 
         throw new BadMethodCallException('Specify via method.');

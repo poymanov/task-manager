@@ -92,7 +92,11 @@ class FacebookAuthenticator extends SocialAuthenticator
         try {
             return $userProvider->loadUserByUsername($username);
         } catch (UsernameNotFoundException $e) {
-            $this->handler->handle(new Command($network, $id));
+            $command = new Command($network, $id);
+            $command->firstName = $facebookUser->getFirstName();
+            $command->lastName = $facebookUser->getLastName();
+
+            $this->handler->handle($command);
             return $userProvider->loadUserByUsername($username);
         }
     }

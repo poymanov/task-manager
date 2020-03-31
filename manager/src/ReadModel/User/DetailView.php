@@ -19,6 +19,16 @@ class DetailView
     /**
      * @var string
      */
+    public $first_name;
+
+    /**
+     * @var string
+     */
+    public $last_name;
+
+    /**
+     * @var string
+     */
     public $email;
 
     /**

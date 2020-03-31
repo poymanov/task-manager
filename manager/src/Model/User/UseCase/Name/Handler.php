@@ -2,16 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Model\User\UseCase\Network\Auth;
+namespace App\Model\User\UseCase\Name;
 
 use App\Model\Flusher;
 use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\Name;
-use App\Model\User\Entity\User\User;
 use App\Model\User\Entity\User\UserRepository;
-use DateTimeImmutable;
-use DomainException;
-use Exception;
 
 class Handler
 {
@@ -26,7 +22,6 @@ class Handler
     private $flusher;
 
     /**
-     * Handler constructor.
      * @param UserRepository $users
      * @param Flusher $flusher
      */
@@ -38,23 +33,13 @@ class Handler
 
     /**
      * @param Command $command
-     * @throws Exception
      */
     public function handle(Command $command): void
     {
-        if ($this->users->hasByNetworkIdentity($command->network, $command->identity)) {
-            throw new DomainException('User already exists.');
-        }
+        $user = $this->users->get(new Id($command->id));
 
-        $user = User::signUpByNetwork(
-            Id::next(),
-            new DateTimeImmutable(),
-            new Name($command->firstName, $command->lastName),
-            $command->network,
-            $command->identity
-        );
+        $user->changeName(new Name($command->firstName, $command->lastName));
 
-        $this->users->add($user);
         $this->flusher->flush();
     }
 }

@@ -23,6 +23,11 @@ class AuthView
     /**
      * @var string
      */
+    public $name;
+
+    /**
+     * @var string
+     */
     public $role;
 
     /**

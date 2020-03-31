@@ -314,6 +314,16 @@ class User
     }
 
     /**
+     * @param Email $email
+     * @param Name $name
+     */
+    public function edit(Email $email, Name $name): void
+    {
+        $this->name = $name;
+        $this->email = $email;
+    }
+
+    /**
      * @param Role $role
      */
     public function changeRole(Role $role): void

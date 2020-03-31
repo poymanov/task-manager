@@ -385,6 +385,14 @@ class User
     }
 
     /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
      * @return Network[]
      */
     public function getNetworks(): array

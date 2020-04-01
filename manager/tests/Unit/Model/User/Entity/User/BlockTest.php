@@ -19,8 +19,6 @@ class BlockTest extends TestCase
 
         $user->block();
 
-        $user->activate();
-
         self::assertFalse($user->isActive());
         self::assertTrue($user->isBlocked());
     }

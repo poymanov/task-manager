@@ -17,6 +17,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use DomainException;
 use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/users", name="users")
+ * @IsGranted("ROLE_MANAGE_USERS")
  */
 class UsersController extends AbstractController
 {

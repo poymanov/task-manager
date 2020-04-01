@@ -13,6 +13,7 @@ use App\Model\User\UseCase\Role;
 use App\Model\User\UseCase\SignUp\Confirm;
 use App\ReadModel\User\Filter;
 use App\ReadModel\User\UserFetcher;
+use App\ReadModel\Work\Members\Members\Member\MemberFetcher;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use DomainException;
@@ -256,8 +257,9 @@ class UsersController extends AbstractController
      * @param User $user
      * @return Response
      */
-    public function show(User $user): Response
+    public function show(User $user, MemberFetcher $members): Response
     {
-        return $this->render('app/users/show.html.twig', compact('user'));
+        $member = $members->find($user->getId()->getValue());
+        return $this->render('app/users/show.html.twig', compact('user', 'member'));
     }
 }

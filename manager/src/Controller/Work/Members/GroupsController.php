@@ -9,6 +9,8 @@ use App\Model\Work\UseCase\Members\Group\Create;
 use App\Model\Work\UseCase\Members\Group\Edit;
 use App\Model\Work\UseCase\Members\Group\Remove;
 use App\ReadModel\Work\Members\GroupFetcher;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use DomainException;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -66,7 +68,7 @@ class GroupsController extends AbstractController
                 $handler->handle($command);
                 return $this->redirectToRoute('work.members.groups');
             } catch (DomainException $e) {
-                $this->logger->error($e->getMessage(), ['exception' => $e]);
+                $this->logger->warning($e->getMessage(), ['exception' => $e]);
                 $this->addFlash('error', $e->getMessage());
             }
         }
@@ -95,7 +97,7 @@ class GroupsController extends AbstractController
                 $handler->handle($command);
                 return $this->redirectToRoute('work.members.groups.show', ['id' => $group->getId()]);
             } catch (DomainException $e) {
-                $this->logger->error($e->getMessage(), ['exception' => $e]);
+                $this->logger->warning($e->getMessage(), ['exception' => $e]);
                 $this->addFlash('error', $e->getMessage());
             }
         }
@@ -112,6 +114,8 @@ class GroupsController extends AbstractController
      * @param Request $request
      * @param Remove\Handler $handler
      * @return Response
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function delete(Group $group, Request $request, Remove\Handler $handler): Response
     {
@@ -125,7 +129,7 @@ class GroupsController extends AbstractController
             $handler->handle($command);
             return $this->redirectToRoute('work.members.groups');
         } catch (DomainException $e) {
-            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            $this->logger->warning($e->getMessage(), ['exception' => $e]);
             $this->addFlash('error', $e->getMessage());
         }
 

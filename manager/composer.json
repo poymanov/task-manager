@@ -3,6 +3,7 @@
     "license": "proprietary",
     "require": {
         "php": "^7.2.5",
+        "ext-PDO": "^7.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "knplabs/knp-menu-bundle": "^3.0",

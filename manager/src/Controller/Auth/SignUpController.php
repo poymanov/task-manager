@@ -6,15 +6,21 @@ namespace App\Controller\Auth;
 use App\Model\User\UseCase\SignUp;
 use App\ReadModel\User\UserFetcher;
 use App\Security\LoginFormAuthenticator;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use DomainException;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class SignUpController extends AbstractController
 {
@@ -44,7 +50,12 @@ class SignUpController extends AbstractController
      * @param Request $request
      * @param SignUp\Request\Handler $handler
      * @return Response
-     * @throws Exception
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @throws TransportExceptionInterface
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function request(Request $request, SignUp\Request\Handler $handler): Response
     {
@@ -59,7 +70,7 @@ class SignUpController extends AbstractController
                 $this->addFlash('success', 'Check your email.');
                 return $this->redirectToRoute('home');
             } catch (DomainException $e) {
-                $this->logger->error($e->getMessage(), ['exception' => $e]);
+                $this->logger->warning($e->getMessage(), ['exception' => $e]);
                 $this->addFlash('error', $e->getMessage());
             }
         }
@@ -104,7 +115,7 @@ class SignUpController extends AbstractController
                 'main'
             );
         } catch (DomainException $e) {
-            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            $this->logger->warning($e->getMessage(), ['exception' => $e]);
             $this->addFlash('error', $e->getMessage());
             return $this->redirectToRoute('auth.signup');
         }

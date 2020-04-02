@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace App\Security\OAuth;
-
 
 use App\Model\User\UseCase\Network\Auth\Command;
 use App\Model\User\UseCase\Network\Auth\Handler;
@@ -19,7 +17,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class FacebookAuthenticator extends SocialAuthenticator

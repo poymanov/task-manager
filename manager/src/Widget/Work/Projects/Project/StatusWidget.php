@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Widget\User;
+namespace App\Widget\Work\Projects\Project;
 
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -19,7 +19,7 @@ class StatusWidget extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('user_status', [$this, 'status'], ['needs_environment' => true, 'is_safe' => ['html']])
+            new TwigFunction('project_status', [$this, 'status'], ['needs_environment' => true, 'is_safe' => ['html']])
         ];
     }
 
@@ -33,7 +33,7 @@ class StatusWidget extends AbstractExtension
      */
     public function status(Environment $twig, string $status): string
     {
-        return $twig->render('widget/user/status.html.twig', [
+        return $twig->render('widget/work/projects/project/status.html.twig', [
             'status' => $status
         ]);
     }

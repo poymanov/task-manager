@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Model\Work\UseCase\Projects\Project\Membership\Edit;
 
-use App\Model\Work\UseCase\Projects\Project\Membership\Add\Command;
 use App\ReadModel\Work\Projects\Project\DepartmentFetcher;
 use App\ReadModel\Work\Projects\RoleFetcher;
 use Symfony\Component\Form\AbstractType;
@@ -42,12 +41,12 @@ class Form extends AbstractType
     {
         $builder
             ->add('departments', ChoiceType::class, [
-                'choice' => array_flip($this->departments->listOfProject($options['project'])),
+                'choices' => array_flip($this->departments->listOfProject($options['project'])),
                 'expanded' => true,
                 'multiple' => true,
             ])
             ->add('roles', ChoiceType::class, [
-                'choice' => array_flip($this->roles->allList()),
+                'choices' => array_flip($this->roles->allList()),
                 'expanded' => true,
                 'multiple' => true,
             ]);

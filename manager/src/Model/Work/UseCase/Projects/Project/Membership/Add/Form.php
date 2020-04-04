@@ -58,12 +58,12 @@ class Form extends AbstractType
                 'choices' => $members
             ])
             ->add('departments', ChoiceType::class, [
-                'choice' => array_flip($this->departments->listOfProject($options['project'])),
+                'choices' => array_flip($this->departments->listOfProject($options['project'])),
                 'expanded' => true,
                 'multiple' => true,
             ])
             ->add('roles', ChoiceType::class, [
-                'choice' => array_flip($this->roles->allList()),
+                'choices' => array_flip($this->roles->allList()),
                 'expanded' => true,
                 'multiple' => true,
             ]);

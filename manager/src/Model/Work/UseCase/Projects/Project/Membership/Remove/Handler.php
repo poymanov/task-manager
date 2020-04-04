@@ -10,7 +10,7 @@ use App\Model\Work\Entity\Projects\Project\Id;
 use App\Model\Work\Entity\Projects\Project\ProjectRepository;
 use App\Model\Work\Entity\Members\Member\Id as MemberId;
 
-class Handle
+class Handler
 {
     /**
      * @var ProjectRepository

@@ -13,10 +13,9 @@ use App\Model\Work\Entity\Projects\Project\ProjectRepository;
 use App\Model\Work\Entity\Projects\Role\Id as RoleId;
 use App\Model\Work\Entity\Projects\Role\Role;
 use App\Model\Work\Entity\Projects\Role\RoleRepository;
-use App\Model\Work\UseCase\Projects\Project\Membership\Add\Command;
 use Exception;
 
-class Handle
+class Handler
 {
     /**
      * @var ProjectRepository

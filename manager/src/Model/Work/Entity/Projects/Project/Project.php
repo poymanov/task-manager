@@ -158,6 +158,21 @@ class Project
     }
 
     /**
+     * @param MemberId $id
+     * @return bool
+     */
+    public function hasMember(MemberId $id): bool
+    {
+        foreach ($this->memberships as $membership) {
+            if ($membership->isForMember($id)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @param Member $member
      * @param array $departmentIds
      * @param array $roles
@@ -205,6 +220,22 @@ class Project
         }
 
         throw new DomainException('Member is not found.');
+    }
+
+    /**
+     * @param MemberId $id
+     * @param string $permission
+     * @return bool
+     */
+    public function isMemberGranted(MemberId $id, string $permission): bool
+    {
+        foreach ($this->memberships as $membership) {
+            if ($membership->isForMember($id)) {
+                return $membership->isGranted($permission);
+            }
+        }
+
+        return false;
     }
     
     /**

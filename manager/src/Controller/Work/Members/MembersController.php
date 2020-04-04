@@ -13,6 +13,7 @@ use App\Model\Work\UseCase\Members\Member\Create;
 use App\Model\Work\UseCase\Members\Member\Move;
 use App\ReadModel\Work\Members\Members\Member\Filter;
 use App\ReadModel\Work\Members\Members\Member\MemberFetcher;
+use App\ReadModel\Work\Projects\Project\DepartmentFetcher;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use DomainException;
@@ -230,10 +231,12 @@ class MembersController extends AbstractController
     /**
      * @Route("/{id}", name=".show", requirements={"id"=App\Annotation\Guid::PATTERN})
      * @param Member $member
+     * @param DepartmentFetcher $fetcher
      * @return Response
      */
-    public function show(Member $member): Response
+    public function show(Member $member, DepartmentFetcher $fetcher): Response
     {
-        return $this->render('app/work/members/show.html.twig', compact('member'));
+        $departments = $fetcher->allOfMember($member->getId()->getValue());
+        return $this->render('app/work/members/show.html.twig', compact('member', 'departments'));
     }
 }

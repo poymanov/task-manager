@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\ReadModel\Work\Members\Members\Member;
 
 use App\Model\Work\Entity\Members\Member\Member;
+use App\Model\Work\Entity\Members\Member\Status;
 use App\ReadModel\Work\Members\Members\Member\Filter\Filter;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -104,5 +106,26 @@ class MemberFetcher
             ->where('id = :id')
             ->setParameter(':id', $id)
             ->execute()->fetchColumn() > 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function activeGroupedList(): array
+    {
+        $stmt = $this->connection->createQueryBuilder()
+            ->select([
+                'm.id',
+                'CONCAT(m.name_first, \' \', m.name_last) as name',
+                'g.name AS group'
+            ])
+            ->from('work_members_members', 'm')
+            ->leftJoin('m', 'work_members_groups', 'g', 'g.id = m.group_id')
+            ->andWhere('m.status = :status')
+            ->setParameter('status', Status::ACTIVE)
+            ->orderBy('g.name')->addOrderBy('name')
+            ->execute();
+
+        return $stmt->fetchAll(FetchMode::ASSOCIATIVE);
     }
 }

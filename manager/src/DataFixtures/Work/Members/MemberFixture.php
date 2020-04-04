@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace App\DataFixtures\Work\Members;
-
 
 use App\DataFixtures\UserFixture;
 use App\Model\User\Entity\User\User;
@@ -19,6 +17,8 @@ use Doctrine\Persistence\ObjectManager;
 
 class MemberFixture extends Fixture implements DependentFixtureInterface
 {
+    public const REFERENCE_ADMIN = 'work_member_admin';
+
     /**
      * @inheritDoc
      */
@@ -40,6 +40,7 @@ class MemberFixture extends Fixture implements DependentFixtureInterface
 
         $member = $this->createMember($admin, $staff);
         $manager->persist($member);
+        $this->setReference(self::REFERENCE_ADMIN, $member);
 
         $member = $this->createMember($user, $customers);
         $manager->persist($member);

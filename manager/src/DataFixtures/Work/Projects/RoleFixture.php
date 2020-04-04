@@ -13,6 +13,8 @@ use Exception;
 
 class RoleFixture extends Fixture
 {
+    public const REFERENCE_MANAGER = 'work_project_role_manager';
+
     /**
      * @inheritDoc
      * @throws Exception
@@ -22,10 +24,11 @@ class RoleFixture extends Fixture
         $guest = $this->createRole('Guest', []);
         $manager->persist($guest);
 
-        $guest = $this->createRole('Manager', [
+        $manage = $this->createRole('Manager', [
             Permission::MANAGE_PROJECT_MEMBERS
         ]);
-        $manager->persist($guest);
+        $manager->persist($manage);
+        $this->setReference(self::REFERENCE_MANAGER, $manage);
 
         $manager->flush();
     }

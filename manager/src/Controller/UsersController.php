@@ -17,7 +17,6 @@ use App\ReadModel\Work\Members\Members\Member\MemberFetcher;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use DomainException;
-use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,18 +30,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class UsersController extends AbstractController
 {
     private const PER_PAGE = 10;
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
     /**
-     * UsersController constructor.
-     * @param LoggerInterface $logger
+     * @var ErrorHandler
      */
-    public function __construct(LoggerInterface $logger)
+    private $errors;
+
+    /**
+     * @param ErrorHandler $errors
+     */
+    public function __construct(ErrorHandler $errors)
     {
-        $this->logger = $logger;
+        $this->errors = $errors;
     }
 
     /**
@@ -92,7 +91,7 @@ class UsersController extends AbstractController
                 $handler->handle($command);
                 return $this->redirectToRoute('users');
             } catch (DomainException $e) {
-                $this->logger->warning($e->getMessage(), ['exception' => $e]);
+                $this->errors->handle($e);
                 $this->addFlash('error', $e->getMessage());
             }
         }
@@ -126,7 +125,7 @@ class UsersController extends AbstractController
                 $handler->handle($command);
                 return $this->redirectToRoute('users.show', ['id' => $user->getId()]);
             } catch (DomainException $e) {
-                $this->logger->warning($e->getMessage(), ['exception' => $e]);
+                $this->errors->handle($e);
                 $this->addFlash('error', $e->getMessage());
             }
         }
@@ -161,7 +160,7 @@ class UsersController extends AbstractController
                 $handler->handle($command);
                 return $this->redirectToRoute('users.show', ['id' => $user->getId()]);
             } catch (DomainException $e) {
-                $this->logger->warning($e->getMessage(), ['exception' => $e]);
+                $this->errors->handle($e);
                 $this->addFlash('error', $e->getMessage());
             }
         }
@@ -190,7 +189,7 @@ class UsersController extends AbstractController
         try {
             $handler->handle($command);
         } catch (DomainException $e) {
-            $this->logger->warning($e->getMessage(), ['exception' => $e]);
+            $this->errors->handle($e);
             $this->addFlash('error', $e->getMessage());
         }
 
@@ -215,7 +214,7 @@ class UsersController extends AbstractController
         try {
             $handler->handle($command);
         } catch (DomainException $e) {
-            $this->logger->warning($e->getMessage(), ['exception' => $e]);
+            $this->errors->handle($e);
             $this->addFlash('error', $e->getMessage());
         }
 
@@ -245,7 +244,7 @@ class UsersController extends AbstractController
         try {
             $handler->handle($command);
         } catch (DomainException $e) {
-            $this->logger->warning($e->getMessage(), ['exception' => $e]);
+            $this->errors->handle($e);
             $this->addFlash('error', $e->getMessage());
         }
 
@@ -255,6 +254,7 @@ class UsersController extends AbstractController
     /**
      * @Route("/{id}", name=".show")
      * @param User $user
+     * @param MemberFetcher $members
      * @return Response
      */
     public function show(User $user, MemberFetcher $members): Response

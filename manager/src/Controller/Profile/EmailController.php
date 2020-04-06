@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Profile;
 
+use App\Controller\ErrorHandler;
 use App\Model\User\UseCase\Email;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use DomainException;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,16 +24,16 @@ use Twig\Error\SyntaxError;
 class EmailController extends AbstractController
 {
     /**
-     * @var LoggerInterface
+     * @var ErrorHandler
      */
-    private $logger;
+    private $errors;
 
     /**
-     * @param LoggerInterface $logger
+     * @param ErrorHandler $errors
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(ErrorHandler $errors)
     {
-        $this->logger = $logger;
+        $this->errors = $errors;
     }
 
     /**
@@ -61,7 +61,7 @@ class EmailController extends AbstractController
                 $this->addFlash('success', 'Check your email.');
                 return $this->redirectToRoute('profile');
             } catch (DomainException $e) {
-                $this->logger->warning($e->getMessage(), ['exception' => $e]);
+                $this->errors->handle($e);
                 $this->addFlash('error', $e->getMessage());
             }
         }
@@ -86,7 +86,7 @@ class EmailController extends AbstractController
             $this->addFlash('success', 'Email is successfully changed.');
             return $this->redirectToRoute('profile');
         } catch (DomainException $e) {
-            $this->logger->warning($e->getMessage(), ['exception' => $e]);
+            $this->errors->handle($e);
             $this->addFlash('error', $e->getMessage());
             return $this->redirectToRoute('profile');
         }

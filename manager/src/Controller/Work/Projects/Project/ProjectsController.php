@@ -94,7 +94,7 @@ class ProjectsController extends AbstractController
             }
         }
 
-        return $this->render('app/work/projects/project/create.html.twig', [
+        return $this->render('app/work/projects/create.html.twig', [
             'form' => $form->createView(),
         ]);
     }

@@ -63,7 +63,7 @@ class ProjectFetcher
 
         if ($filter->member) {
             $qb->andWhere('EXISTS(
-                SELECT ms.member_id FROM work_projects_project_memberships ms WHERE ms.project_id = p.id AND ms.member_id = :member
+                SELECT ms.member_id FROM work_projects_project_membership ms WHERE ms.project_id = p.id AND ms.member_id = :member
             )');
             $qb->setParameter(':member', $filter->member);
         }

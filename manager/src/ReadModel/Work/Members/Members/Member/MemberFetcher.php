@@ -61,7 +61,7 @@ class MemberFetcher
                 'm.email',
                 'g.name as group',
                 'm.status',
-                '(SELECT COUNT(*) FROM work_projects_project_memberships ms WHERE ms.member_id = m.id) as memberships_count'
+                '(SELECT COUNT(*) FROM work_projects_project_membership ms WHERE ms.member_id = m.id) as memberships_count'
             )
             ->from('work_members_members', 'm')
             ->innerJoin('m', 'work_members_groups', 'g', 'm.group_id = g.id');

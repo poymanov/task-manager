@@ -8,6 +8,7 @@ use App\ReadModel\Work\Projects\Project\Filter\Filter;
 use Doctrine\DBAL\Connection;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use PDO;
 use UnexpectedValueException;
 
 class ProjectFetcher
@@ -41,6 +42,20 @@ class ProjectFetcher
             ->select('MAX(p.sort) as m')
             ->from('work_projects_projects', 'p')
             ->execute()->fetch()['m'];
+    }
+
+    /**
+     * @return array
+     */
+    public function allList(): array
+    {
+        $stmt = $this->connection->createQueryBuilder()
+            ->select('id', 'name')
+            ->from('work_projects_projects')
+            ->orderBy('sort')
+            ->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
     }
 
     /**

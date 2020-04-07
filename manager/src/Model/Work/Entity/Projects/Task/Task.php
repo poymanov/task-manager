@@ -11,81 +11,112 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use DomainException;
 use Webmozart\Assert\Assert;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name="work_projects_tasks", indexes={
+ *      @ORM\Index(columns={"date"})
+ * })
+ */
 class Task
 {
     /**
      * @var Id
+     * @ORM\Column(type="work_projects_task_id")
+     * @ORM\Id
      */
     private $id;
 
     /**
      * @var Project
+     * @ORM\ManyToOne(targetEntity="App\Model\Work\Entity\Projects\Project\Project")
+     * @ORM\JoinColumn(name="project_id", referencedColumnName="id", nullable=false)
      */
     private $project;
 
     /**
      * @var Member
+     * @ORM\ManyToOne(targetEntity="App\Model\Work\Entity\Members\Member\Member")
+     * @ORM\JoinColumn(name="author_id", referencedColumnName="id", nullable=false)
      */
     private $author;
 
     /**
      * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable")
      */
     private $date;
 
     /**
      * @var DateTimeImmutable|null
+     * @ORM\Column(type="date_immutable", nullable=true)
      */
     private $startDate;
 
     /**
      * @var DateTimeImmutable|null
+     * @ORM\Column(type="date_immutable", nullable=true)
      */
     private $endDate;
 
     /**
      * @var DateTimeImmutable|null
+     * @ORM\Column(type="date_immutable", nullable=true)
      */
     private $planDate;
 
     /**
      * @var string
+     * @ORM\Column(type="string")
      */
     private $name;
 
     /**
      * @var string|null
+     * @ORM\Column(type="text", nullable=true)
      */
     private $content;
 
     /**
      * @var Type
+     * @ORM\Column(type="work_projects_task_type", length=16)
      */
     private $type;
 
     /**
      * @var int
+     * @ORM\Column(type="smallint")
      */
     private $progress;
 
     /**
      * @var int
+     * @ORM\Column(type="smallint")
      */
     private $priority;
 
     /**
      * @var Task|null
+     * @ORM\ManyToOne(targetEntity="Task")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     private $parent;
 
     /**
      * @var Status
+     * @ORM\Column(type="work_projects_project_status", length=16)
      */
     private $status;
 
     /**
      * @var ArrayCollection|Member[]
+     * @ORM\ManyToMany(targetEntity="App\Model\Work\Entity\Members\Member\Member")
+     * @ORM\JoinTable(name="work_projects_tasks_executors",
+     *     joinColumns={@ORM\JoinColumn(name="task_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="member_id", referencedColumnName="id")}
+     * )
+     * @ORM\OrderBy({"name.first" = "ASC"})
      */
     private $executors;
 

@@ -18,6 +18,7 @@ use Doctrine\Persistence\ObjectManager;
 class MemberFixture extends Fixture implements DependentFixtureInterface
 {
     public const REFERENCE_ADMIN = 'work_member_admin';
+    public const REFERENCE_USER = 'work_member_user';
 
     /**
      * @inheritDoc
@@ -44,6 +45,7 @@ class MemberFixture extends Fixture implements DependentFixtureInterface
 
         $member = $this->createMember($user, $customers);
         $manager->persist($member);
+        $this->setReference(self::REFERENCE_USER, $member);
 
         $manager->flush();
     }

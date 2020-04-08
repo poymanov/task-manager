@@ -302,11 +302,11 @@ class Project
     }
 
     /**
-     * @return Membership[]|ArrayCollection
+     * @return Membership[]
      */
-    public function getMemberships()
+    public function getMemberships(): array
     {
-        return $this->memberships;
+        return $this->memberships->toArray();
     }
 
     public function getMembership(MemberId $id): Membership

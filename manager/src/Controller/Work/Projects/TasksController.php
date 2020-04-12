@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Work\Projects;
 
 use App\Model\Work\Entity\Members\Member\Member;
+use App\Model\Work\Entity\Projects\Project\Project;
 use App\Model\Work\Entity\Projects\Task\Task;
 use App\Model\Work\UseCase\Projects\Task\ChildOf;
 use App\Model\Work\UseCase\Projects\Task\Edit;
@@ -22,6 +23,7 @@ use App\Model\Work\UseCase\Projects\Task\Type;
 use App\Controller\ErrorHandler;
 use App\ReadModel\Work\Members\Members\Member\MemberFetcher;
 use App\ReadModel\Work\Projects\Task\TaskFetcher;
+use App\Security\Voter\Work\Projects\ProjectAccess;
 use App\Security\Voter\Work\Projects\TaskAccess;
 use DomainException;
 use Exception;
@@ -513,6 +515,68 @@ class TasksController extends AbstractController
             'progressForm' => $progressForm->createView(),
             'typeForm' => $typeForm->createView(),
             'priorityForm' => $priorityForm->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/me", name=".me")
+     * @ParamConverter("project", options={"id" = "project_id"})
+     * @param Request $request
+     * @param TaskFetcher $tasks
+     * @return Response
+     */
+    public function me(Request $request, TaskFetcher $tasks): Response
+    {
+        $filter = FIlter\Filter::all();
+
+        $form = $this->createForm(Filter\Form::class, $filter, [
+            'action' => $this->generateUrl('work.projects.tasks')
+        ]);
+        $form->handleRequest($request);
+
+        $pagination = $tasks->all(
+            $filter->forExecutor($this->getUser()->getId()),
+            $request->query->getInt('page', 1),
+            self::PER_PAGE,
+            $request->query->get('sort', 't.date'),
+            $request->query->get('direction', 'desc')
+        );
+
+        return $this->render('app/work/projects/tasks/index.html.twig', [
+            'project' => null,
+            'pagination' => $pagination,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/own", name=".own")
+     * @ParamConverter("project", options={"id" = "project_id"})
+     * @param Request $request
+     * @param TaskFetcher $tasks
+     * @return Response
+     */
+    public function own(Request $request, TaskFetcher $tasks): Response
+    {
+        $filter = FIlter\Filter::all();
+
+        $form = $this->createForm(Filter\Form::class, $filter, [
+            'action' => $this->generateUrl('work.projects.tasks')
+        ]);
+        $form->handleRequest($request);
+
+        $pagination = $tasks->all(
+            $filter->forAuthor($this->getUser()->getId()),
+            $request->query->getInt('page', 1),
+            self::PER_PAGE,
+            $request->query->get('sort', 't.date'),
+            $request->query->get('direction', 'desc')
+        );
+
+        return $this->render('app/work/projects/tasks/index.html.twig', [
+            'project' => null,
+            'pagination' => $pagination,
+            'form' => $form->createView()
         ]);
     }
 }

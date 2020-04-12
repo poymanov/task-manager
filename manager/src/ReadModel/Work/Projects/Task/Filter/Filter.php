@@ -82,4 +82,26 @@ class Filter
 
         return $clone;
     }
+
+    /**
+     * @param string $author
+     * @return $this
+     */
+    public function forAuthor(string $author): self
+    {
+        $clone = clone $this;
+        $clone->author = $author;
+        return $clone;
+    }
+
+    /**
+     * @param string $executor
+     * @return $this
+     */
+    public function forExecutor(string $executor): self
+    {
+        $clone = clone $this;
+        $clone->executor = $executor;
+        return $clone;
+    }
 }

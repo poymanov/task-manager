@@ -23,10 +23,10 @@ class Command
     public $member;
 
     /**
-     * @var string
-     * @Assert\NotBlank()
+     * @var NameRow[]
+     * @Assert\Valid()
      */
-    public $name;
+    public $names;
 
     /**
      * @var string

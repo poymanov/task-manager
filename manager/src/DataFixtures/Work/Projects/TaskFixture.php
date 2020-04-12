@@ -22,6 +22,7 @@ class TaskFixture extends Fixture implements DependentFixtureInterface
 {
     /**
      * @inheritDoc
+     * @throws Exception
      */
     public function load(ObjectManager $manager): void
     {
@@ -41,6 +42,7 @@ class TaskFixture extends Fixture implements DependentFixtureInterface
             $project = $faker->randomElement($projects);
 
             $task = $this->createRandomTask($project, $faker, $date);
+
             $date = $date->modify('+' . $faker->numberBetween(1, 3) . 'days 3minutes');
 
             if ($faker->boolean(40)) {
@@ -80,7 +82,7 @@ class TaskFixture extends Fixture implements DependentFixtureInterface
             $manager->persist($task);
         }
 
-        $manager->persist($task);
+        $manager->flush();
     }
 
     /**

@@ -23,7 +23,7 @@ class Command
 
     /**
      * @var bool
-     * @Assert\Time("bool")
+     * @Assert\Type("bool")
      */
     public $withChildren;
 

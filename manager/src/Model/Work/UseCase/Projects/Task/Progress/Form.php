@@ -36,4 +36,12 @@ class Form extends AbstractType
             'data_class' => Command::class,
         ]);
     }
+
+    /**
+     * @return string
+     */
+    public function getBlockPrefix(): string
+    {
+        return 'progress';
+    }
 }

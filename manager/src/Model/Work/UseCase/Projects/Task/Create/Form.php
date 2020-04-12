@@ -21,7 +21,7 @@ class Form extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('content', TextareaType::class, ['required' => false, 'attr' => ['rows' => 10]])
-            ->add('parent', IntegerType::class, ['required' => false])
+            ->add('parent', TextType::class, ['required' => false])
             ->add('plan', DateType::class, ['required' => false, 'widget' => 'single_text', 'input' => 'datetime_immutable'])
             ->add('type', ChoiceType::class, ['choices' => [
                 'None' => Type::NONE,

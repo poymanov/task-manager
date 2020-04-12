@@ -143,7 +143,7 @@ class MemberFetcher
                 'd.name AS department'
             ])
             ->from('work_members_members', 'm')
-            ->innerJoin('m', 'work_projects_project_memberships', 'ms', 'ms.member_id = m.id')
+            ->innerJoin('m', 'work_projects_project_membership', 'ms', 'ms.member_id = m.id')
             ->innerJoin('ms', 'work_projects_project_membership_departments', 'msd', 'msd.membership_id = ms.id')
             ->innerJoin('msd', 'work_projects_project_departments', 'd', 'd.id = msd.department_id')
             ->andWhere('m.status = :status AND ms.project_id = :project')

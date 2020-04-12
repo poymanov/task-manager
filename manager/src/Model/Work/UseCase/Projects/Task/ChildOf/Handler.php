@@ -35,7 +35,7 @@ class Handler
      */
     public function handle(Command $command): void
     {
-        $task = $this->tasks->get(new Id($command->parent));
+        $task = $this->tasks->get(new Id($command->id));
 
         if ($command->parent) {
             $parent = $this->tasks->get(new Id($command->parent));

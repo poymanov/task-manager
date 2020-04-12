@@ -15,6 +15,9 @@ class Status
     public const REJECTED = 'rejected';
     public const DONE = 'done';
 
+    /**
+     * @var string
+     */
     private $name;
 
     /**
@@ -59,9 +62,9 @@ class Status
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

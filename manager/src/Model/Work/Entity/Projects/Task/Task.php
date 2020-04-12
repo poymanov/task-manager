@@ -105,7 +105,7 @@ class Task
 
     /**
      * @var Status
-     * @ORM\Column(type="work_projects_project_status", length=16)
+     * @ORM\Column(type="work_projects_task_status", length=16)
      */
     private $status;
 

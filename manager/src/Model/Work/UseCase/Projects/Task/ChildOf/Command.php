@@ -36,7 +36,7 @@ class Command
     public static function fromTask(Task $task): self
     {
         $command = new self($task->getId()->getValue());
-        $command->parent = $task->getProject() ? $task->getParent()->getId()->getValue() : null;
+        $command->parent = $task->getParent() ? $task->getParent()->getId()->getValue() : null;
 
         return $command;
     }

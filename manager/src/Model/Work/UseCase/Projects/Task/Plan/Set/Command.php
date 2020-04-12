@@ -7,23 +7,26 @@ namespace App\Model\Work\UseCase\Projects\Task\Plan\Set;
 use App\Model\Work\Entity\Projects\Task\Task;
 use DateTimeImmutable;
 use Exception;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Command
 {
     /**
-     * @var
+     * @var string
+     * @Assert\NotBlank()
      */
     public $id;
 
     /**
      * @var DateTimeImmutable
+     * @Assert\NotBlank()
      */
     public $date;
 
     /**
      * @param $id
      */
-    public function __construct($id)
+    public function __construct(string $id)
     {
         $this->id = $id;
     }

@@ -24,7 +24,7 @@ class Filter
     /**
      * @var string
      */
-    public $name;
+    public $text;
 
     /**
      * @var string

@@ -41,7 +41,7 @@ class Form extends AbstractType
         }
 
         $builder
-            ->add('name', TextType::class, ['required' => false, 'attr' => [
+            ->add('text', TextType::class, ['required' => false, 'attr' => [
                 'placeholder' => 'Search...',
                 'onchange' => 'this.form.submit()'
             ]])

@@ -7,6 +7,7 @@ namespace App\Tests\Builder\User;
 use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\Name;
+use App\Model\User\Entity\User\Role;
 use App\Model\User\Entity\User\User;
 use BadMethodCallException;
 use DateTimeImmutable;
@@ -60,6 +61,11 @@ class UserBuilder
     private $identity;
 
     /**
+     * @var Role
+     */
+    private $role;
+
+    /**
      * UserBuilder constructor.
      * @throws Exception
      */
@@ -111,6 +117,42 @@ class UserBuilder
     }
 
     /**
+     * @param Id $id
+     * @return $this
+     */
+    public function withId(Id $id): self
+    {
+        $clone = clone $this;
+        $clone->id = $id;
+
+        return $clone;
+    }
+
+    /**
+     * @param Name $name
+     * @return $this
+     */
+    public function withName(Name $name): self
+    {
+        $clone = clone $this;
+        $clone->name = $name;
+
+        return $clone;
+    }
+
+    /**
+     * @param Role $role
+     * @return $this
+     */
+    public function withRole(Role $role): self
+    {
+        $clone = clone $this;
+        $clone->role = $role;
+
+        return $clone;
+    }
+
+    /**
      * @return User
      * @throws Exception
      */
@@ -129,12 +171,10 @@ class UserBuilder
             if ($this->confirmed) {
                 $user->confirmSignUp();
             }
-
-            return $user;
         }
 
         if ($this->network) {
-            return User::signUpByNetwork(
+            $user = User::signUpByNetwork(
                 $this->id,
                 $this->date,
                 $this->name,
@@ -143,6 +183,14 @@ class UserBuilder
             );
         }
 
-        throw new BadMethodCallException('Specify via method.');
+        if (!$user) {
+            throw new BadMethodCallException('Specify via method.');
+        }
+
+        if ($this->role) {
+            $user->changeRole($this->role);
+        }
+
+        return $user;
     }
 }

@@ -48,3 +48,6 @@ manager-assets-dev:
 
 manager-test:
 	docker-compose run --rm manager-php-cli php bin/phpunit
+
+manager-test-unit:
+	docker-compose run --rm manager-php-cli php bin/phpunit	--testsuite=unit

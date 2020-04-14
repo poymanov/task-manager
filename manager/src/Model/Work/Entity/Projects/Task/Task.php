@@ -7,6 +7,9 @@ namespace App\Model\Work\Entity\Projects\Task;
 use App\Model\Work\Entity\Members\Member\Id as MemberId;
 use App\Model\Work\Entity\Members\Member\Member;
 use App\Model\Work\Entity\Projects\Project\Project;
+use App\Model\Work\Entity\Projects\Task\File\File;
+use App\Model\Work\Entity\Projects\Task\File\Id as FileId;
+use App\Model\Work\Entity\Projects\Task\File\Info;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use DomainException;
@@ -79,6 +82,12 @@ class Task
     private $content;
 
     /**
+     * @var ArrayCollection|File[]
+     * @ORM\OneToMany(targetEntity="App\Model\Work\Entity\Projects\Task\File\File", mappedBy="task", orphanRemoval=true, cascade={"all"})
+     */
+    private $files;
+
+    /**
      * @var Type
      * @ORM\Column(type="work_projects_task_type", length=16)
      */
@@ -147,11 +156,38 @@ class Task
         $this->date = $date;
         $this->name = $name;
         $this->content = $content;
+        $this->files = new ArrayCollection();
         $this->type = $type;
         $this->progress = 0;
         $this->priority = $priority;
         $this->status = Status::new();
         $this->executors = new ArrayCollection();
+    }
+
+    /**
+     * @param FileId $id
+     * @param Member $member
+     * @param DateTimeImmutable $date
+     * @param Info $info
+     */
+    public function addFile(FileId $id, Member $member, DateTimeImmutable $date, Info $info): void
+    {
+        $this->files->add(new File($this, $member, $id, $date, $info));
+    }
+
+    /**
+     * @param FileId $id
+     */
+    public function removeFile(FileId $id): void
+    {
+        foreach ($this->files as $current) {
+            if ($current->getId()->isEqual($id)) {
+                $this->files->removeElement($current);
+                return;
+            }
+        }
+
+        throw new DomainException('File is not found.');
     }
 
     /**
@@ -410,6 +446,14 @@ class Task
     public function getContent(): ?string
     {
         return $this->content;
+    }
+
+    /**
+     * @return File[]
+     */
+    public function getFiles()
+    {
+        return $this->files;
     }
 
     /**

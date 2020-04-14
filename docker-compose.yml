@@ -20,6 +20,7 @@ services:
       - manager-postgres
       - mailer
       - manager-redis
+      - storage
   manager-php-cli:
     build:
       context: ./manager/docker
@@ -31,6 +32,7 @@ services:
       - manager-postgres
       - mailer
       - manager-redis
+      - storage
   manager-node-watch:
     image: node:11.13-alpine
     volumes:
@@ -52,10 +54,26 @@ services:
       POSTGRES_DB: app
     ports:
     - "54321:5432"
+  storage:
+    build:
+      context: ./storage/docker
+      dockerfile: nginx.docker
+    volumes:
+    - ./storage:/app
+    ports:
+      - "8081:80"
+  storage-ftp:
+    image: stilliard/pure-ftpd
+    environment:
+      FTP_USER_NAME: app
+      FTP_USER_PASS: secret
+      FTP_USER_HOME: /app
+    volumes:
+    - ./storage/public:/app
   mailer:
     image: mailhog/mailhog
     ports:
-      - "8081:8025"
+      - "8082:8025"
   manager-redis:
     image: redis:3.0-alpine
     restart: always

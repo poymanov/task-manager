@@ -47,6 +47,11 @@ class Filter
     public $executor;
 
     /**
+     * @var string
+     */
+    public $roots;
+
+    /**
      * @param string|null $project
      */
     public function __construct(?string $project)

@@ -23,7 +23,7 @@ use App\Model\Work\UseCase\Projects\Task\TakeAndStart;
 use App\Model\Work\UseCase\Projects\Task\Type;
 use App\Controller\ErrorHandler;
 use App\ReadModel\Work\Members\Members\Member\MemberFetcher;
-use App\ReadModel\Work\Projects\ActionFetcher;
+use App\ReadModel\Work\Projects\Action\ActionFetcher;
 use App\ReadModel\Work\Projects\Task\CommentFetcher;
 use App\ReadModel\Work\Projects\Task\TaskFetcher;
 use App\Security\Voter\Work\Projects\TaskAccess;

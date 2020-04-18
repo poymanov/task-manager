@@ -24,6 +24,7 @@ use App\Model\Work\UseCase\Projects\Task\Type;
 use App\Controller\ErrorHandler;
 use App\ReadModel\Work\Members\Members\Member\MemberFetcher;
 use App\ReadModel\Work\Projects\Action\ActionFetcher;
+use App\ReadModel\Work\Projects\Action\Feed\Feed;
 use App\ReadModel\Work\Projects\Task\CommentFetcher;
 use App\ReadModel\Work\Projects\Task\TaskFetcher;
 use App\Security\Voter\Work\Projects\TaskAccess;
@@ -518,7 +519,7 @@ class TasksController extends AbstractController
         $commentCommand = new Comment\Create\Command(
             $this->getUser()->getId(),
             Task::class,
-            (string) $task->getId()->getValue()
+            (string)$task->getId()->getValue()
         );
 
         $commentForm = $this->createForm(Comment\Create\Form::class, $commentCommand);
@@ -534,13 +535,17 @@ class TasksController extends AbstractController
             }
         }
 
+        $feed = new Feed(
+            $actions->allForTask($task->getId()->getValue()),
+            $comments->allForTask($task->getId()->getValue())
+        );
+
         return $this->render('app/work/projects/tasks/show.html.twig', [
             'project' => $task->getProject(),
             'task' => $task,
             'member' => $member,
             'children' => $tasks->childrenOf($task->getId()->getValue()),
-            'comments' => $comments->allForTask($task->getId()->getValue()),
-            'actions' => $actions->allForTask($task->getId()->getValue()),
+            'feed' => $feed,
             'statusForm' => $statusForm->createView(),
             'progressForm' => $progressForm->createView(),
             'typeForm' => $typeForm->createView(),

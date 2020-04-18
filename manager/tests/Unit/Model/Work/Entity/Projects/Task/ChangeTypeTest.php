@@ -9,6 +9,7 @@ use App\Tests\Builder\Work\Members\GroupBuilder;
 use App\Tests\Builder\Work\Members\MemberBuilder;
 use App\Tests\Builder\Work\Projects\ProjectBuilder;
 use App\Tests\Builder\Work\Projects\TaskBuilder;
+use DateTimeImmutable;
 use Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -26,7 +27,7 @@ class ChangeTypeTest extends TestCase
             ->withType(new Type(Type::FEATURE))
             ->build($project, $member);
 
-        $task->changeType($type = new Type(Type::ERROR));
+        $task->changeType($member, new DateTimeImmutable(), $type = new Type(Type::ERROR));
 
         self::assertEquals($type, $task->getType());
     }
@@ -41,6 +42,6 @@ class ChangeTypeTest extends TestCase
             ->build($project, $member);
 
         $this->expectExceptionMessage('Type is already same.');
-        $task->changeType($type);
+        $task->changeType($member, new DateTimeImmutable(), $type);
     }
 }

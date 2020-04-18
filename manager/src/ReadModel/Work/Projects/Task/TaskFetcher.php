@@ -9,10 +9,9 @@ use App\ReadModel\Work\Projects\Task\Filter\Filter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\Pagination\AbstractPagination;
 use Knp\Component\Pager\Pagination\PaginationInterface;
-use Knp\Component\Pager\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
-use UnexpectedValueException;
 
 class TaskFetcher
 {
@@ -150,7 +149,7 @@ class TaskFetcher
 
         $qb->orderBy($sort, $direction);
 
-        /** @var SlidingPagination $pagination */
+        /** @var AbstractPagination $pagination */
         $pagination = $this->paginator->paginate($qb, $page, $size);
 
         $tasks = $pagination->getItems();

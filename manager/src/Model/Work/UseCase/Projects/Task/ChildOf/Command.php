@@ -13,29 +13,37 @@ class Command
      * @var string
      * @Assert\NotBlank()
      */
-    public $id;
+    public $actor;
 
     /**
      * @var string
      * @Assert\NotBlank()
      */
+    public $id;
+
+    /**
+     * @var string
+     */
     public $parent;
 
     /**
+     * @param string $actor
      * @param string $id
      */
-    public function __construct(string $id)
+    public function __construct(string $actor, string $id)
     {
+        $this->actor = $actor;
         $this->id = $id;
     }
 
     /**
+     * @param string $actor
      * @param Task $task
      * @return static
      */
-    public static function fromTask(Task $task): self
+    public static function fromTask(string $actor, Task $task): self
     {
-        $command = new self($task->getId()->getValue());
+        $command = new self($actor, $task->getId()->getValue());
         $command->parent = $task->getParent() ? $task->getParent()->getId()->getValue() : null;
 
         return $command;

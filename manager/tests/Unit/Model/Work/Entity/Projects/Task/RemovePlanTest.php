@@ -9,30 +9,23 @@ use App\Tests\Builder\Work\Members\MemberBuilder;
 use App\Tests\Builder\Work\Projects\ProjectBuilder;
 use App\Tests\Builder\Work\Projects\TaskBuilder;
 use DateTimeImmutable;
-use Exception;
 use PHPUnit\Framework\TestCase;
 
-class EditTest extends TestCase
+class RemovePlanTest extends TestCase
 {
-    /**
-     * @throws Exception
-     */
     public function testSuccess(): void
     {
         $group = (new GroupBuilder())->build();
         $member = (new MemberBuilder())->build($group);
         $project = (new ProjectBuilder())->build();
-
         $task = (new TaskBuilder())->build($project, $member);
 
-        $task->edit(
-            $member,
-            new DateTimeImmutable(),
-            $name = 'New Name',
-            $content = 'New Content'
-        );
+        $task->plan($member, new DateTimeImmutable(), $date = new DateTimeImmutable());
 
-        self::assertEquals($name, $task->getName());
-        self::assertEquals($content, $task->getContent());
+        self::assertEquals($date, $task->getPlanDate());
+
+        $task->removePlan($member, new DateTimeImmutable());
+
+        self::assertNull($task->getPlanDate());
     }
 }

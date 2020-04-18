@@ -12,6 +12,12 @@ class Command
      * @var string
      * @Assert\NotBlank()
      */
+    public $actor;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     */
     public $id;
 
     /**
@@ -21,11 +27,13 @@ class Command
     public $member;
 
     /**
+     * @param string $actor
      * @param string $id
      * @param string $member
      */
-    public function __construct(string $id, string $member)
+    public function __construct(string $actor, string $id, string $member)
     {
+        $this->actor = $actor;
         $this->id = $id;
         $this->member = $member;
     }

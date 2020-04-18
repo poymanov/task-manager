@@ -24,23 +24,8 @@ class PlanTest extends TestCase
         $project = (new ProjectBuilder())->build();
         $task = (new TaskBuilder())->build($project, $member);
 
-        $task->plan($date = new DateTimeImmutable());
+        $task->plan($member, new DateTimeImmutable(), $date = new DateTimeImmutable('+1 day'));
 
         self::assertEquals($date, $task->getPlanDate());
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testEmpty(): void
-    {
-        $group = (new GroupBuilder())->build();
-        $member = (new MemberBuilder())->build($group);
-        $project = (new ProjectBuilder())->build();
-        $task = (new TaskBuilder())->build($project, $member);
-
-        $task->plan(null);
-
-        self::assertNull($task->getPlanDate());
     }
 }

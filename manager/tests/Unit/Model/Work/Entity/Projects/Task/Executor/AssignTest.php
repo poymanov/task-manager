@@ -8,6 +8,7 @@ use App\Tests\Builder\Work\Members\GroupBuilder;
 use App\Tests\Builder\Work\Members\MemberBuilder;
 use App\Tests\Builder\Work\Projects\ProjectBuilder;
 use App\Tests\Builder\Work\Projects\TaskBuilder;
+use DateTimeImmutable;
 use Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -27,7 +28,7 @@ class AssignTest extends TestCase
 
         self::assertFalse($task->hasExecutor($executor->getId()));
 
-        $task->assignExecutor($executor);
+        $task->assignExecutor($member, new DateTimeImmutable(), $executor);
 
         self::assertEquals([$executor], $task->getExecutors());
         self::assertTrue($task->hasExecutor($executor->getId()));
@@ -45,9 +46,9 @@ class AssignTest extends TestCase
 
         $executor = (new MemberBuilder())->build($group);
 
-        $task->assignExecutor($executor);
+        $task->assignExecutor($member, new DateTimeImmutable(), $executor);
 
         $this->expectExceptionMessage('Executor is already assigned.');
-        $task->assignExecutor($executor);
+        $task->assignExecutor($member, new DateTimeImmutable(), $executor);
     }
 }

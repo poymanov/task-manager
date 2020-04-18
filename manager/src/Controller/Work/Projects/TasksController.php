@@ -23,6 +23,7 @@ use App\Model\Work\UseCase\Projects\Task\TakeAndStart;
 use App\Model\Work\UseCase\Projects\Task\Type;
 use App\Controller\ErrorHandler;
 use App\ReadModel\Work\Members\Members\Member\MemberFetcher;
+use App\ReadModel\Work\Projects\ActionFetcher;
 use App\ReadModel\Work\Projects\Task\CommentFetcher;
 use App\ReadModel\Work\Projects\Task\TaskFetcher;
 use App\Security\Voter\Work\Projects\TaskAccess;
@@ -100,7 +101,7 @@ class TasksController extends AbstractController
     {
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = Edit\Command::fromTask($task);
+        $command = Edit\Command::fromTask($this->getUser()->getId(), $task);
 
         $form = $this->createForm(Edit\Form::class, $command);
         $form->handleRequest($request);
@@ -133,7 +134,7 @@ class TasksController extends AbstractController
     {
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = Move\Command::fromTask($task);
+        $command = Move\Command::fromTask($this->getUser()->getId(), $task);
 
         $form = $this->createForm(Move\Form::class, $command);
         $form->handleRequest($request);
@@ -166,7 +167,7 @@ class TasksController extends AbstractController
     {
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = ChildOf\Command::fromTask($task);
+        $command = ChildOf\Command::fromTask($this->getUser()->getId(), $task);
 
         $form = $this->createForm(ChildOf\Form::class, $command);
         $form->handleRequest($request);
@@ -227,7 +228,7 @@ class TasksController extends AbstractController
         $project = $task->getProject();
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = new Executor\Assign\Command($task->getId()->getValue());
+        $command = new Executor\Assign\Command($this->getUser()->getId(), $task->getId()->getValue());
 
         $form = $this->createForm(Executor\Assign\Form::class, $command, ['project_id' => $project->getId()->getValue()]);
         $form->handleRequest($request);
@@ -265,7 +266,7 @@ class TasksController extends AbstractController
 
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = new Start\Command($task->getId()->getValue());
+        $command = new Start\Command($this->getUser()->getId(), $task->getId()->getValue());
 
         try {
             $handler->handle($command);
@@ -292,7 +293,7 @@ class TasksController extends AbstractController
 
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = new Take\Command($task->getId()->getValue(), $this->getUser()->getId());
+        $command = new Take\Command($this->getUser()->getId(), $task->getId()->getValue());
 
         try {
             $handler->handle($command);
@@ -320,7 +321,7 @@ class TasksController extends AbstractController
 
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = new TakeAndStart\Command($task->getId()->getValue(), $this->getUser()->getId());
+        $command = new TakeAndStart\Command($this->getUser()->getId(), $task->getId()->getValue());
 
         try {
             $handler->handle($command);
@@ -344,7 +345,7 @@ class TasksController extends AbstractController
     {
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = Plan\Set\Command::fromTask($task);
+        $command = Plan\Set\Command::fromTask($this->getUser()->getId(), $task);
 
         $form = $this->createForm(Plan\Set\Form::class, $command);
         $form->handleRequest($request);
@@ -381,7 +382,7 @@ class TasksController extends AbstractController
 
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = new Plan\Remove\Command($task->getId()->getValue());
+        $command = new Plan\Remove\Command($this->getUser()->getId(), $task->getId()->getValue());
 
         try {
             $handler->handle($command);
@@ -410,7 +411,7 @@ class TasksController extends AbstractController
 
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = new Executor\Revoke\Command($task->getId()->getValue(), $member->getId()->getValue());
+        $command = new Executor\Revoke\Command($this->getUser()->getId(), $task->getId()->getValue(), $member->getId()->getValue());
 
         try {
             $handler->handle($command);
@@ -429,6 +430,7 @@ class TasksController extends AbstractController
      * @param MemberFetcher $members
      * @param TaskFetcher $tasks
      * @param CommentFetcher $comments
+     * @param ActionFetcher $actions
      * @param Status\Handler $statusHandler
      * @param Progress\Handler $progressHandler
      * @param Type\Handler $typeHandler
@@ -443,6 +445,7 @@ class TasksController extends AbstractController
         MemberFetcher $members,
         TaskFetcher $tasks,
         CommentFetcher $comments,
+        ActionFetcher $actions,
         Status\Handler $statusHandler,
         Progress\Handler $progressHandler,
         Type\Handler $typeHandler,
@@ -456,7 +459,7 @@ class TasksController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $statusCommand = Status\Command::fromTask($task);
+        $statusCommand = Status\Command::fromTask($this->getUser()->getId(), $task);
         $statusForm = $this->createForm(Status\Form::class, $statusCommand);
         $statusForm->handleRequest($request);
 
@@ -470,7 +473,7 @@ class TasksController extends AbstractController
             }
         }
 
-        $progressCommand = Progress\Command::fromTask($task);
+        $progressCommand = Progress\Command::fromTask($this->getUser()->getId(), $task);
         $progressForm = $this->createForm(Progress\Form::class, $progressCommand);
         $progressForm->handleRequest($request);
 
@@ -484,7 +487,7 @@ class TasksController extends AbstractController
             }
         }
 
-        $typeCommand = Type\Command::fromTask($task);
+        $typeCommand = Type\Command::fromTask($this->getUser()->getId(), $task);
         $typeForm = $this->createForm(Type\Form::class, $typeCommand);
         $typeForm->handleRequest($request);
 
@@ -498,7 +501,7 @@ class TasksController extends AbstractController
             }
         }
 
-        $priorityCommand = Priority\Command::fromTask($task);
+        $priorityCommand = Priority\Command::fromTask($this->getUser()->getId(), $task);
         $priorityForm = $this->createForm(Priority\Form::class, $priorityCommand);
         $priorityForm->handleRequest($request);
 
@@ -537,6 +540,7 @@ class TasksController extends AbstractController
             'member' => $member,
             'children' => $tasks->childrenOf($task->getId()->getValue()),
             'comments' => $comments->allForTask($task->getId()->getValue()),
+            'actions' => $actions->allForTask($task->getId()->getValue()),
             'statusForm' => $statusForm->createView(),
             'progressForm' => $progressForm->createView(),
             'typeForm' => $typeForm->createView(),
@@ -619,7 +623,7 @@ class TasksController extends AbstractController
     {
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = new Files\Add\Command($task->getId()->getValue(), $this->getUser()->getId());
+        $command = new Files\Add\Command($this->getUser()->getId(), $task->getId()->getValue());
 
         $form = $this->createForm(Files\Add\Form::class, $command);
         $form->handleRequest($request);
@@ -671,7 +675,7 @@ class TasksController extends AbstractController
 
         $this->denyAccessUnlessGranted(TaskAccess::MANAGE, $task);
 
-        $command = new Files\Remove\Command($task->getId()->getValue(), $fileId);
+        $command = new Files\Remove\Command($this->getUser()->getId(), $task->getId()->getValue(), $fileId);
 
         try {
             $handler->handle($command);

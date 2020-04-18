@@ -18,7 +18,7 @@ class Command
      * @var string
      * @Assert\NotBlank()
      */
-    public $member;
+    public $actor;
 
     /**
      * @var File[]
@@ -27,11 +27,11 @@ class Command
 
     /**
      * @param string $id
-     * @param string $member
+     * @param string $actor
      */
-    public function __construct(string $id, string $member)
+    public function __construct(string $actor, string $id)
     {
         $this->id = $id;
-        $this->member = $member;
+        $this->actor = $actor;
     }
 }

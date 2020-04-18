@@ -8,6 +8,7 @@ use App\Tests\Builder\Work\Members\GroupBuilder;
 use App\Tests\Builder\Work\Members\MemberBuilder;
 use App\Tests\Builder\Work\Projects\ProjectBuilder;
 use App\Tests\Builder\Work\Projects\TaskBuilder;
+use DateTimeImmutable;
 use Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +26,7 @@ class MoveTest extends TestCase
 
         $destination = (new ProjectBuilder())->build();
 
-        $task->move($destination);
+        $task->move($member, new DateTimeImmutable(), $destination);
 
         self::assertEquals($destination, $task->getProject());
     }
@@ -41,6 +42,6 @@ class MoveTest extends TestCase
         $task = (new TaskBuilder())->build($project, $member);
 
         $this->expectExceptionMessage('Project is already same.');
-        $task->move($project);
+        $task->move($member, new DateTimeImmutable(), $project);
     }
 }

@@ -18,15 +18,15 @@ class Command
      * @var string
      * @Assert\NotBlank()
      */
-    public $member;
+    public $actor;
 
     /**
      * @param string $id
-     * @param string $member
+     * @param string $actor
      */
-    public function __construct(string $id, string $member)
+    public function __construct(string $id, string $actor)
     {
         $this->id = $id;
-        $this->member = $member;
+        $this->actor = $actor;
     }
 }

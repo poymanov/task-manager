@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\EventListener\Work\Projects\Task;
+namespace App\Event\Listener\Work\Projects\Task;
 
 use App\Model\Work\Entity\Projects\Task\Event\TaskFileRemoved;
 use App\Service\Uploader\FileUploader;

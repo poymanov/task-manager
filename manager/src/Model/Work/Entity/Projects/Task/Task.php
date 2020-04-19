@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Model\Work\Entity\Projects\Task;
 
+use App\Model\AggregateRoot;
+use App\Model\EventsTrait;
 use App\Model\Work\Entity\Members\Member\Id as MemberId;
 use App\Model\Work\Entity\Members\Member\Member;
 use App\Model\Work\Entity\Projects\Project\Project;
@@ -25,8 +27,10 @@ use Doctrine\ORM\Mapping as ORM;
  *      @ORM\Index(columns={"date"})
  * })
  */
-class Task
+class Task implements AggregateRoot
 {
+    use EventsTrait;
+
     /**
      * @var Id
      * @ORM\Column(type="work_projects_task_id")
@@ -186,6 +190,7 @@ class Task
     {
         $this->files->add(new File($this, $actor, $id, $date, $info));
         $this->addChange($actor, $date, Set::fromFile($id));
+        $this->recordEvent(new Event\TaskFileAdded($actor->getId(), $this->id, $id, $info));
     }
 
     /**
@@ -199,6 +204,7 @@ class Task
             if ($current->getId()->isEqual($id)) {
                 $this->files->removeElement($current);
                 $this->addChange($actor, $date, Set::fromRemovedFile($current->getId()));
+                $this->recordEvent(new Event\TaskFileRemoved($actor->getId(), $this->id, $id, $current->getInfo()));
                 return;
             }
         }
@@ -223,6 +229,8 @@ class Task
             $this->content = $content;
             $this->addChange($actor, $date, Set::fromContent($name));
         }
+
+        $this->recordEvent(new Event\TaskEdited($actor->getId(), $this->id, $name, $content));
     }
 
     /**
@@ -238,7 +246,7 @@ class Task
             throw new DomainException('Task does not contain executors.');
         }
 
-        $this->changeStatus($actor, $date, Status::working(), $date);
+        $this->changeStatus($actor, $date, Status::working());
     }
 
     /**
@@ -280,6 +288,7 @@ class Task
     {
         $this->planDate = $plan;
         $this->addChange($actor, $date, Set::fromPlan($plan));
+        $this->recordEvent(new Event\TaskPlanChanged($actor->getId(), $this->id, $date));
     }
 
     /**
@@ -290,6 +299,7 @@ class Task
     {
         $this->planDate = null;
         $this->addChange($actor, $date, Set::fromRemovedPlan());
+        $this->recordEvent(new Event\TaskPlanChanged($actor->getId(), $this->id, null));
     }
 
     /**
@@ -320,6 +330,7 @@ class Task
 
         $this->type = $type;
         $this->addChange($actor, $date, Set::fromType($type));
+        $this->recordEvent(new Event\TaskTypeChanged($actor->getId(), $this->id, $type));
     }
 
     /**
@@ -335,6 +346,7 @@ class Task
 
         $this->status = $status;
         $this->addChange($actor, $date, Set::fromStatus($status));
+        $this->recordEvent(new Event\TaskStatusChanged($actor->getId(), $this->id, $status));
 
         if (!$status->isNew() && !$this->startDate) {
             $this->startDate = $date;
@@ -364,6 +376,7 @@ class Task
 
         $this->progress = $progress;
         $this->addChange($actor, $date, Set::fromProgress($progress));
+        $this->recordEvent(new Event\TaskProgressChanged($actor->getId(), $this->id, $progress));
     }
 
     /**
@@ -380,6 +393,7 @@ class Task
 
         $this->priority = $priority;
         $this->addChange($actor, $date, Set::fromPriority($priority));
+        $this->recordEvent(new Event\TaskPriorityChanged($actor->getId(), $this->id, $priority));
     }
 
     /**
@@ -410,6 +424,7 @@ class Task
 
         $this->executors->add($executor);
         $this->addChange($actor, $date, Set::fromExecutor($executor->getId()));
+        $this->recordEvent(new Event\TaskExecutorAssigned($actor->getId(), $this->id, $executor->getId()));
     }
 
     /**
@@ -423,6 +438,7 @@ class Task
             if ($current->getId()->isEqual($id)) {
                 $this->executors->removeElement($current);
                 $this->addChange($actor, $date, Set::fromRevokedExecutor($current->getId()));
+                $this->recordEvent(new Event\TaskExecutorRevoked($actor->getId(), $this->id, $current->getId()));
                 return;
             }
         }

@@ -50,6 +50,6 @@ class Handler
 
         $task->plan($actor, new DateTimeImmutable(), $command->date);
 
-        $this->flusher->flush();
+        $this->flusher->flush($task);
     }
 }

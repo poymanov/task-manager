@@ -56,6 +56,6 @@ class Handler
 
         $task->start($actor, new DateTimeImmutable());
 
-        $this->flusher->flush();
+        $this->flusher->flush($task);
     }
 }

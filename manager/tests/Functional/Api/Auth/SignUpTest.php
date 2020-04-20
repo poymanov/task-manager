@@ -83,7 +83,10 @@ class SignUpTest extends DbWebTestCase
         $data = json_decode($content, true);
 
         self::assertArraySubset([
-            'message' => 'User already exists.'
+            'error' => [
+                'code' => Response::HTTP_BAD_REQUEST,
+                'message' => 'User already exists.'
+            ],
         ], $data);
     }
 }

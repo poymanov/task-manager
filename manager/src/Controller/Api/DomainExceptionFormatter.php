@@ -8,6 +8,7 @@ use App\Controller\ErrorHandler;
 use DomainException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -56,7 +57,7 @@ class DomainExceptionFormatter implements EventSubscriberInterface
 
         $event->setResponse(new JsonResponse([
             'error' => [
-                'code' => 400,
+                'code' => Response::HTTP_BAD_REQUEST,
                 'message' => $exception->getMessage()
             ]
         ], 400));

@@ -38,7 +38,7 @@ class Handler
     {
         $user = $this->users->get(new Id($command->id));
 
-        $user->changeName(new Name($command->firstName, $command->lastName));
+        $user->changeName(new Name($command->first, $command->last));
 
         $this->flusher->flush();
     }

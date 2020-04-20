@@ -39,13 +39,19 @@ services:
         $fromEmail: '%env(MAILER_FROM_EMAIL)%'
         $fromName: '%env(MAILER_FROM_NAME)%'
 
-    Predis\Client:
-        arguments:
-            - '%env(REDIS_URL)%'
-            -
+    Redis:
+        class: Redis
+        calls:
+            - method: connect
+              arguments:
+                - '%env(REDIS_HOST)%'
+            - method: auth
+              arguments:
+                - '%env(REDIS_PASSWORD)%'
+
     Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
         arguments:
-            - '@Predis\Client'
+            - '@Redis'
 
     App\Widget\:
         resource: '../src/Widget'

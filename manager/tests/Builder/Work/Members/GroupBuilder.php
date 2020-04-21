@@ -21,6 +21,18 @@ class GroupBuilder
     }
 
     /**
+     * @param string $name
+     * @return $this
+     */
+    public function withName(string $name): self
+    {
+        $clone = clone $this;
+        $clone->name = $name;
+
+        return $clone;
+    }
+
+    /**
      * @return Group
      * @throws Exception
      */

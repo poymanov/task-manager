@@ -33,7 +33,7 @@ class AddTest extends TestCase
         );
 
         self::assertCount(1, $files = $task->getFiles());
-        self::assertInstanceOf(File::class, $file = $files->first());
+        self::assertInstanceOf(File::class, $file = end($files));
 
         self::assertEquals($id, $file->getId());
         self::assertEquals($date, $file->getDate());

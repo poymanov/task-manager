@@ -27,6 +27,18 @@ class ProjectBuilder
     }
 
     /**
+     * @param string $name
+     * @return $this
+     */
+    public function withName(string $name): self
+    {
+        $clone = clone $this;
+        $clone->name = $name;
+
+        return $clone;
+    }
+
+    /**
      * @return Project
      * @throws Exception
      */

@@ -58,6 +58,18 @@ class TaskBuilder
     }
 
     /**
+     * @param Id $id
+     * @return $this
+     */
+    public function withId(Id $id): self
+    {
+        $clone = clone $this;
+        $clone->id = $id;
+
+        return $clone;
+    }
+
+    /**
      * @param Type $type
      * @return $this
      */

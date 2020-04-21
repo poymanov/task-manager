@@ -54,11 +54,11 @@ class TaskAccess extends Voter
             case self::VIEW:
                 return
                     $this->security->isGranted('ROLE_WORK_MANAGE_PROJECTS') ||
-                    $subject->getProjets()->isMemberGranted(new Id($user->getId()), Permission::VIEW_TASKS);
+                    $subject->getProject()->isMemberGranted(new Id($user->getId()), Permission::VIEW_TASKS);
             case self::MANAGE:
                 return
                     $this->security->isGranted('ROLE_WORK_MANAGE_PROJECTS') ||
-                    $subject->getProjets()->isMemberGranted(new Id($user->getId()), Permission::MANAGE_TASKS_TASKS);
+                    $subject->getProject()->isMemberGranted(new Id($user->getId()), Permission::MANAGE_TASKS);
             case self::DELETE:
                 return
                     $this->security->isGranted('ROLE_WORK_MANAGE_PROJECTS');

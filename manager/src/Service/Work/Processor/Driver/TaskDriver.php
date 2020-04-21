@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Twig\Extension\Work\Processor\Driver;
+namespace App\Service\Work\Processor\Driver;
 
-use App\ReadModel\Work\Members\Members\Member\MemberFetcher;
+use App\ReadModel\Work\Projects\Task\TaskFetcher;
 use Twig\Environment;
 
-class MemberDriver implements Driver
+class TaskDriver implements Driver
 {
     private const PATTERN = '/\@[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i';
 
     /**
-     * @var MemberFetcher
+     * @var TaskFetcher
      */
-    private $members;
+    private $tasks;
 
     /**
      * @var Environment
@@ -22,12 +22,12 @@ class MemberDriver implements Driver
     private $twig;
 
     /**
-     * @param MemberFetcher $members
+     * @param TaskFetcher $tasks
      * @param Environment $twig
      */
-    public function __construct(MemberFetcher $members, Environment $twig)
+    public function __construct(TaskFetcher $tasks, Environment $twig)
     {
-        $this->members = $members;
+        $this->tasks = $tasks;
         $this->twig = $twig;
     }
 
@@ -38,11 +38,11 @@ class MemberDriver implements Driver
     {
         return preg_replace_callback(self::PATTERN, function (array $matches) {
             $id = ltrim($matches[0], '@');
-            if (!$member = $this->members->find($id)) {
+            if (!$task = $this->tasks->find($id)) {
                 return $matches[0];
             }
-            return $this->twig->render('processor/work/member.html.twig', [
-                'member' => $member
+            return $this->twig->render('processor/work/task.html.twig', [
+                'task' => $task
             ]);
         }, $text);
     }

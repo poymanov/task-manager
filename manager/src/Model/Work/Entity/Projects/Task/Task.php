@@ -539,7 +539,7 @@ class Task implements AggregateRoot
      */
     public function getFiles()
     {
-        return $this->files;
+        return $this->files->toArray();
     }
 
     /**

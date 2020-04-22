@@ -47,6 +47,13 @@ class Member
     private $status;
 
     /**
+     * @var int
+     * @ORM\Version()
+     * @ORM\Column(type="integer")
+     */
+    private $version;
+
+    /**
      * @param Id $id
      * @param Group $group
      * @param Name $name

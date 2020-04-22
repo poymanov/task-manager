@@ -100,6 +100,13 @@ class User
     private $networks;
 
     /**
+     * @var int
+     * @ORM\Version()
+     * @ORM\Column(type="integer")
+     */
+    private $version;
+
+    /**
      * @param Id $id
      * @param DateTimeImmutable $date
      * @param Name $name

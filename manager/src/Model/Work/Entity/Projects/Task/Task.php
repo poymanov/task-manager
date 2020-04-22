@@ -144,6 +144,13 @@ class Task implements AggregateRoot
     private $changes;
 
     /**
+     * @var int
+     * @ORM\Version()
+     * @ORM\Column(type="integer")
+     */
+    private $version;
+
+    /**
      * @param Id $id
      * @param Project $project
      * @param Member $author

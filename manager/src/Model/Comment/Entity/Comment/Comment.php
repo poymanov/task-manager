@@ -54,6 +54,13 @@ class Comment
     private $updateDate;
 
     /**
+     * @var int
+     * @ORM\Version()
+     * @ORM\Column(type="integer")
+     */
+    private $version;
+
+    /**
      * @param Id $id
      * @param DateTimeImmutable $date
      * @param AuthorId $authorId

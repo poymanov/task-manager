@@ -33,6 +33,13 @@ class Role
     private $permissions;
 
     /**
+     * @var int
+     * @ORM\Version()
+     * @ORM\Column(type="integer")
+     */
+    private $version;
+
+    /**
      * @param Id $id
      * @param string $name
      * @param Permission[]|ArrayCollection $permissions

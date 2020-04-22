@@ -61,6 +61,13 @@ class Project
     private $memberships;
 
     /**
+     * @var int
+     * @ORM\Version()
+     * @ORM\Column(type="integer")
+     */
+    private $version;
+
+    /**
      * Project constructor.
      * @param Id $id
      * @param string $name

@@ -11,7 +11,7 @@ class HomeTest extends DbWebTestCase
 {
     public function testGet(): void
     {
-        $this->client->request('GET', '/api');
+        $this->client->request('GET', '/api/');
 
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         self::assertJson($content = $this->client->getResponse()->getContent());
@@ -23,7 +23,7 @@ class HomeTest extends DbWebTestCase
 
     public function testPost(): void
     {
-        $this->client->request('POST', '/api');
+        $this->client->request('POST', '/api/');
 
         self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
